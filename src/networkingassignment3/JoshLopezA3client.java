@@ -10,6 +10,8 @@ import java.util.*;
 import java.io.*;
 import java.util.Scanner;
 import java.net.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class JoshLopezA3client {
@@ -92,6 +94,16 @@ public class JoshLopezA3client {
         Socket serverL = new Socket("localhost", 33445);
         DataOutputStream localOut = new DataOutputStream(serverL.getOutputStream());
         BufferedReader localIn = new BufferedReader(new InputStreamReader(serverL.getInputStream()));
+	
+	//Loads DVR file
+	URL url = JoshLopezA3server.class.getResource("DVR.txt");
+	File file = null;
+	try {
+	    file = new File(url.toURI());
+	} catch (URISyntaxException ex) {
+	    Logger.getLogger(JoshLopezA3server.class.getName()).log(Level.SEVERE, null, ex);
+	}
+	Scanner reader = new Scanner(file);
           
                  
         
