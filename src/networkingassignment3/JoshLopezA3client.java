@@ -6,7 +6,7 @@
 package networkingassignment3;
 
 import java.util.PriorityQueue;
-
+import java.util.*; 
 /**
  *
  * @author Nick
@@ -78,6 +78,46 @@ public class JoshLopezA3client {
     
 
     public static void main(String[] args) {
+        
+        Scanner input = new Scanner(System.in);
+        
+        int user_input;
+        
+        //read in the WT.txt
+        
+        
+        
+        //sent WT to the server
+        
+        
+        System.out.println ("Enter an options 1 or 2");
+        user_input = input.nextInt();
+        
+        
+        //read in the DVR.txt
+        
+        
+        
+        //sent DVR to the server
+        
+        
+        //send user input to the server 
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         Vertex v0 = new Vertex("v0");
         Vertex v1 = new Vertex("v1");
         Vertex v2 = new Vertex("v2");
