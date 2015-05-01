@@ -7,10 +7,11 @@ package networkingassignment3;
 
 import java.util.PriorityQueue;
 import java.util.*; 
-/**
- *
- * @author Nick
- */
+import java.io.*;
+import java.util.Scanner;
+import java.net.*;
+
+
 public class JoshLopezA3client {
 
     
@@ -77,21 +78,31 @@ public class JoshLopezA3client {
     }
     
 
-    public static void main(String[] args) {
+      public static void main(String Args[]) throws Exception {
         
         Scanner input = new Scanner(System.in);
         
         int user_input;
-        
-        //read in the WT.txt
-        
-        
-        
-        //sent WT to the server
-        
+   
         
         System.out.println ("Enter an options 1 or 2");
         user_input = input.nextInt();
+        
+        // creates a connection to server?
+        Socket serverL = new Socket("localhost", 33445);
+        DataOutputStream localOut = new DataOutputStream(serverL.getOutputStream());
+        BufferedReader localIn = new BufferedReader(new InputStreamReader(serverL.getInputStream()));
+          
+                 
+        
+            
+            
+            
+        //sent the user input to the server 
+        localOut.writeBytes(user_input.toString() );
+    
+            
+    
         
         
         //read in the DVR.txt
@@ -99,9 +110,9 @@ public class JoshLopezA3client {
         
         
         //sent DVR to the server
+        localOut.writeBytes(user_input.toString() );
         
-        
-        //send user input to the server 
+
         
         
         

@@ -10,75 +10,162 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Scanner;
+import java.io.*;
+import java.net.*;
+import java.text.DecimalFormat;
 
-/**
- *
- * @author Nick
- */
+
+
+
 public class JoshLopezA3server {
     
-    
-    
-    
-    
-    //create routing table from WT.txt
-    
-    
-    
-    
-    
-    public static void method (int user_input, int numDVR_messages, int[] message){
+    public static void main(String argv[]) throws Exception{
+        String wt;
+        String option;
+        String httpReturn;
+        ServerSocket welcomeSocket = new ServerSocket(33445);
+        double startTime;
+        
+                
+        //read wt file 
+            
+            
+        //create wt file 
+            
+        createRouting(wt);
+            
+        //print routing
+        printRouting();
+                
+        
+        
+        
+        //creates the server?
+        while (true) {
+            Socket connectionSocket = welcomeSocket.accept();
+            BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+            DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
          
-        
-        //time to process 
-        int T1 = 0, T2 = 0;
-                
-                
-        if (user_input == 1) {
-            //reads DVR messages from client 
+
             
             
-            for (int i = 0; i < numDVR_messages; i++) {
-            //Updates the routing table 
             
             
-            //prints the routing table 
-                
-                
-                
-            }
-            System.out.println("Elapsed time: " + T1);
             
+            
+            
+            //Get the option the user wants
+            option = inFromClient.readLine();
+            
+            //SEND get request (NEEDS TO BE PROPERLY FORMATTED) 
+            
+            // the user send option 1
+             if (option.equals("1") ){ 
+                 //get current time
+                 startTime = (System.currentTimeMillis()/1000.0) + 2208988800.0;
+
+              
            
-           
-        }
-        
-        else if (user_input == 2) {
+                 //get data from client 
+                 int numDVR_messages =inFromClient.readLine();
+                 String dvrMessage = inFromClient.readLine();
+                 
+                 
+                 //for each dvr message 
+                 for (int i = 0; i < numDVR_messages; i++) {
+                    
+                     
+                    updateRouting(dvrMessage); 
+                    
+                    printRouting(); 
+                    
+                 }
+                 //Elapsed time 
+                 double endTime = (System.currentTimeMillis()/1000.0) + 2208988800.0;
+                 double timeBetween = startTime - endTime;
+                 System.out.println("Elapsed time (T1): " + new DecimalFormat("0.00").format(timeBetween*1000) + " ms");  
             
+            
+             }
+         //if option 2 is selected    
+         else if (option.equals("2") ){
+           startTime = (System.currentTimeMillis()/1000.0) + 2208988800.0;
+            
+
             //thread 1 
             //reads DVR messages from client 
+            int numDVR_messages =inFromClient.readLine();
+            String dvrMessage = inFromClient.readLine();
+          
+            
+            
             
             
             //thread 2
-            //Updates the routing table 
-         
-            //prints the routing table 
-                
-                
-                
-              System.out.println("Elapsed time: " + T2);
+            //Updates the routing table
+            updateRouting(dvrMessage); 
             
-        }
-        else {
+            
+            //prints the routing table 
+             printRouting();
+             
+             
+             
+            //Elapsed time 
+                 double endTime = (System.currentTimeMillis()/1000.0) + 2208988800.0;
+                 double timeBetween = startTime - endTime;
+                 System.out.println("Elapsed time (T1): " + new DecimalFormat("0.00").format(timeBetween*1000) + " ms");  
+              
+             
+             
+           
+        } else {
+            //invalid choice as in not (1 or 2)
+            System.out.println("User choice is invalid");
+        }//end of if block
+             
+             
+             
+             
+             
+        }//end of while loop
         
-        System.out.println ("invalid input");
-        }
         
-        
+    }//end of main
+
+
+    private static void updateRouting(String dvrMessage) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private static void printRouting() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private static void createRouting(String wt) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
+    private static void dvr(String wt) {
         
         
         
     }
+    
+    
+    
+    
+  
+    
+    
+    
+    
+  
+    
+    
+    
+    
     public static void Dijkstra(Vertex source){
         source.minDis = 0;
         PriorityQueue<Vertex> vertex = new PriorityQueue<>();
