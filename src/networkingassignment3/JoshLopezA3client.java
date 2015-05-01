@@ -13,6 +13,7 @@ import java.util.PriorityQueue;
  */
 public class JoshLopezA3client {
 
+    
     public static void Dijkstra(Vertex source){
         source.minDis = 0;
         PriorityQueue<Vertex> vertex = new PriorityQueue<>();
@@ -36,7 +37,7 @@ public class JoshLopezA3client {
         }
     }
     
-    private static class Vertex{
+    private static class Vertex implements Comparable<Vertex>{
 	String name;
 	Edge[] adj;
 	double minDis = Double.POSITIVE_INFINITY;
@@ -74,6 +75,7 @@ public class JoshLopezA3client {
 	    return weight;
 	}
     }
+    
 
     public static void main(String[] args) {
         Vertex v0 = new Vertex("v0");
