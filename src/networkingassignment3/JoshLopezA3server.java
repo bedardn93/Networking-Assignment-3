@@ -12,23 +12,35 @@ import java.util.PriorityQueue;
 import java.util.Scanner;
 import java.io.*;
 import java.net.*;
-import java.text.DecimalFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 
 
-public class JoshLopezA3server {
+public class JoshLopezA3server extends Thread {
     
     static ArrayList<Vertex> vertices = new ArrayList<>();
+    private Thread t;
+    private String threadName;
     
+    public JoshLopezA3server(){}
+    
+    public JoshLopezA3server (String name){
+	threadName = name;
+	System.out.println("Creating " + threadName);
+    }
+    
+    public JoshLopezA3server (String name, ArrayList<Vertex> list){
+	threadName = name;
+	vertices = list;
+	System.out.println("Creating " + threadName);
+    }
     public static void main(String argv[]) throws Exception{
         String wt;
         String option;
         String httpReturn;
         ServerSocket welcomeSocket = new ServerSocket(33445);
-        double startTime;
         
                 
         //read wt file 
@@ -54,75 +66,78 @@ public class JoshLopezA3server {
             option = inFromClient.readLine();
 	    System.out.println(option);
             
-            //SEND get request (NEEDS TO BE PROPERLY FORMATTED) 
-            
             // the user send option 1
-             if (option.equals("1") ){ 
-                 //get current time
-                 startTime = (System.currentTimeMillis()/1000.0) + 2208988800.0;
+	    if (option.equals("1") ){ 
+		//get current time
+		long startTime = (System.nanoTime());
 
                  //get data from client
-                 int numDVR_messages = Integer.parseInt(inFromClient.readLine());
-                 String dvrMessage = inFromClient.readLine();
-                 
-                 //for each dvr message 
-                 for (int i = 0; i < numDVR_messages; i++) {                    
-                    updateRouting(dvrMessage);                     
-                    printRouting();                     
-                 }
-                 //Elapsed time 
-                 double endTime = (System.currentTimeMillis()/1000.0) + 2208988800.0;
-                 double timeBetween = startTime - endTime;
-                 System.out.println("Elapsed time (T1): " + new DecimalFormat("0.00").format(timeBetween*1000) + " ms");  
+		int numDVR_messages = Integer.parseInt(inFromClient.readLine());
+		
+		//for each dvr message
+		for (int i = 0; i < numDVR_messages; i++) 
+		    updateRouting(inFromClient.readLine());
+		//Elapsed time
+		long endTime = (System.nanoTime()-startTime);
+		System.out.println("Elapsed time (T1): " + (endTime/1000000000.0) + " seconds.");
             
-            
-             }
-         //if option 2 is selected    
-         else if (option.equals("2") ){
-           startTime = (System.currentTimeMillis()/1000.0) + 2208988800.0;
-            
-            //thread 1 
-            //reads DVR messages from client 
-            int numDVR_messages = Integer.parseInt(inFromClient.readLine());
-            String dvrMessage = inFromClient.readLine();          
-            
-            //thread 2
-            //Updates the routing table
-            updateRouting(dvrMessage); 
-            
-            //prints the routing table 
-             printRouting();
-             
-            //Elapsed time 
-                 double endTime = (System.currentTimeMillis()/1000.0) + 2208988800.0;
-                 double timeBetween = startTime - endTime;
-                 System.out.println("Elapsed time (T1): " + new DecimalFormat("0.00").format(timeBetween*1000) + " ms");  
-              
-             
-             
-           
-        } else {
-            //invalid choice as in not (1 or 2)
-            System.out.println("User choice is invalid");
-        }//end of if block
-             
-             
-             
-             
-             
+	    
+	    }
+	    //if option 2 is selected    
+	    else if (option.equals("2") ){
+		long startTime = (System.nanoTime());
+
+		//thread 1 
+		//reads DVR messages from client 
+		JoshLopezA3server newThread = new JoshLopezA3server("Thread-1");
+		newThread.start();
+		int numDVR_messages = Integer.parseInt(inFromClient.readLine());
+		String dvrMessage = inFromClient.readLine();
+
+		//thread 2
+		//Updates the routing table
+		updateRouting(dvrMessage); 
+
+		//prints the routing table 
+		printRouting();
+
+		//Elapsed time 
+		long endTime = (System.nanoTime()-startTime);
+		System.out.println("Elapsed time (T2): " + (endTime/1000000000.0) + " seconds.");
+
+
+
+
+	    } else {
+		//invalid choice as in not (1 or 2)
+		System.out.println("User choice is invalid");
+	    }//end of if block
+	    //print routing
+	    printRouting();
         }//end of while loop
         
         
     }//end of main
 
+    public void run(){
+	System.out.println("New thread running ");
+	try{
+	    Thread.sleep(50);
+	}catch (InterruptedException e){
+	    System.out.println("Thread interrupted.");
+	}
+    }
     private static void updateRouting(String dvrMessage) {
         
     }
 
     private static void printRouting() {
-        for(int i = 0; i < vertices.size(); i++){
-            System.out.println("( "+vertices.get(i).getName()+", "+vertices.get(i).adj[0].getWeight()+" )");
-        }
+	for (Vertex vertice : vertices) {
+	    System.out.print("( " + vertice.getName() + ", ");
+	    for(Edge edge : vertice.adj)
+		System.out.print(edge.getWeight());
+	    System.out.print(" )\n");
+	}
     }
 
     private static void createRouting() {
@@ -150,7 +165,7 @@ public class JoshLopezA3server {
         
     }
     
-    public static void Dijkstra(Vertex source){
+    public static void Dijkstra(Vertex source) {
         source.minDis = 0;
         PriorityQueue<Vertex> vertex = new PriorityQueue<>();
       	vertex.add(source);
