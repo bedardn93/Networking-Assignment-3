@@ -21,7 +21,8 @@ import java.util.logging.Logger;
 
 public class JoshLopezA3server {
     
-    /*
+    static ArrayList<Vertex> vertices = new ArrayList<>();
+    
     public static void main(String argv[]) throws Exception{
         String wt;
         String option;
@@ -33,9 +34,8 @@ public class JoshLopezA3server {
         //read wt file 
             
             
-        //create wt file 
-            
-        createRouting(wt);
+        //create wt file
+        createRouting();
             
         //print routing
         printRouting();
@@ -49,17 +49,10 @@ public class JoshLopezA3server {
             Socket connectionSocket = welcomeSocket.accept();
             BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
             DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-         
-
-            
-            
-            
-            
-            
-            
             
             //Get the option the user wants
             option = inFromClient.readLine();
+	    System.out.println(option);
             
             //SEND get request (NEEDS TO BE PROPERLY FORMATTED) 
             
@@ -68,21 +61,14 @@ public class JoshLopezA3server {
                  //get current time
                  startTime = (System.currentTimeMillis()/1000.0) + 2208988800.0;
 
-              
-           
-                 //get data from client 
+                 //get data from client
                  int numDVR_messages = Integer.parseInt(inFromClient.readLine());
                  String dvrMessage = inFromClient.readLine();
                  
-                 
                  //for each dvr message 
-                 for (int i = 0; i < numDVR_messages; i++) {
-                    
-                     
-                    updateRouting(dvrMessage); 
-                    
-                    printRouting(); 
-                    
+                 for (int i = 0; i < numDVR_messages; i++) {                    
+                    updateRouting(dvrMessage);                     
+                    printRouting();                     
                  }
                  //Elapsed time 
                  double endTime = (System.currentTimeMillis()/1000.0) + 2208988800.0;
@@ -95,25 +81,17 @@ public class JoshLopezA3server {
          else if (option.equals("2") ){
            startTime = (System.currentTimeMillis()/1000.0) + 2208988800.0;
             
-
             //thread 1 
             //reads DVR messages from client 
-            int numDVR_messages =inFromClient.readLine();
-            String dvrMessage = inFromClient.readLine();
-          
-            
-            
-            
+            int numDVR_messages = Integer.parseInt(inFromClient.readLine());
+            String dvrMessage = inFromClient.readLine();          
             
             //thread 2
             //Updates the routing table
             updateRouting(dvrMessage); 
             
-            
             //prints the routing table 
              printRouting();
-             
-             
              
             //Elapsed time 
                  double endTime = (System.currentTimeMillis()/1000.0) + 2208988800.0;
@@ -136,18 +114,33 @@ public class JoshLopezA3server {
         
         
     }//end of main
-*/
 
     private static void updateRouting(String dvrMessage) {
         
     }
 
     private static void printRouting() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for(int i = 0; i < vertices.size(); i++){
+            System.out.println("( "+vertices.get(i).getName()+", "+vertices.get(i).adj[0].getWeight()+" )");
+        }
     }
 
-    private static void createRouting(String wt) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private static void createRouting() {
+        URL url = JoshLopezA3server.class.getResource("WT.txt");
+	Scanner reader = null;
+	try {
+	    reader = new Scanner(new File(url.toURI()));
+	} catch (URISyntaxException | FileNotFoundException ex) {
+	    Logger.getLogger(JoshLopezA3server.class.getName()).log(Level.SEVERE, null, ex);
+	}
+	
+        int count = 0;
+        while(reader.hasNextInt()){
+            vertices.add(new Vertex(reader.next()));
+            vertices.get(count).adj = 
+                    new Edge[]{new Edge(vertices.get(count),reader.nextInt())};
+            count++;
+        }
     }
     
     
@@ -156,19 +149,6 @@ public class JoshLopezA3server {
         
         
     }
-    
-    
-    
-    
-  
-    
-    
-    
-    
-  
-    
-    
-    
     
     public static void Dijkstra(Vertex source){
         source.minDis = 0;
@@ -230,29 +210,5 @@ public class JoshLopezA3server {
 	public double getWeight(){
 	    return weight;
 	}
-    }
-    
-
-    public static void main(String[] args) throws FileNotFoundException, IOException {
-	URL url = JoshLopezA3server.class.getResource("WT.txt");
-	File file = null;
-	try {
-	    file = new File(url.toURI());
-	} catch (URISyntaxException ex) {
-	    Logger.getLogger(JoshLopezA3server.class.getName()).log(Level.SEVERE, null, ex);
-	}
-	Scanner reader = new Scanner(file);
-	ArrayList<Vertex> vertices = new ArrayList<Vertex>();
-        int count = 0;
-        while(reader.hasNextInt()){
-            vertices.add(new Vertex(reader.next()));
-            vertices.get(count).adj = 
-                    new Edge[]{new Edge(vertices.get(count),reader.nextInt())};
-            count++;
-        }
-        for(int i = 0; i < vertices.size(); i++){
-            System.out.println("( "+vertices.get(i).getName()+", "+vertices.get(i).adj[0].getWeight()+" )");
-        }
-    
     }
 }
