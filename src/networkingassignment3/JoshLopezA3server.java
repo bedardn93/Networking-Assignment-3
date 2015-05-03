@@ -149,12 +149,12 @@ public class JoshLopezA3server extends Thread {
 	    Logger.getLogger(JoshLopezA3server.class.getName()).log(Level.SEVERE, null, ex);
 	}
 	
-        int count = 0;
         while(reader.hasNextInt()){
             vertices.add(new Vertex(reader.next()));
-            vertices.get(count).adj = 
-                    new Edge[]{new Edge(vertices.get(count),reader.nextInt())};
-            count++;
+            //vertices.get(0).adj = 
+                    //new Edge[]{new Edge(vertices.get(0),reader.nextInt())};
+	    vertices.get(0).adj.add(new Edge(vertices.get(0),reader.nextInt()));
+	    vertices.get(0).printEdges();
         }
     }
     
@@ -188,18 +188,44 @@ public class JoshLopezA3server extends Thread {
         }
     }
     
+    private static class DVR {
+	ArrayList<Vertex> destination = new ArrayList<Vertex>();
+	ArrayList<Vertex> nexthop = new ArrayList<Vertex>();
+	ArrayList<Vertex> distance = new ArrayList<Vertex>();
+	
+	public DVR(Vertex dest, Vertex hop, Vertex dist){
+	    destination.add(dest);
+	    nexthop.add(hop);
+	    distance.add(dist);
+	}
+	
+	public void addRoute(Vertex dest, Vertex hop, Vertex dist){
+	    destination.add(dest);
+	    nexthop.add(hop);
+	    distance.add(dist);
+	}
+    }
+    
     private static class Vertex implements Comparable<Vertex>{
 	String name;
-	Edge[] adj;
+	ArrayList<Edge> adj;
 	double minDis = Double.POSITIVE_INFINITY;
 	Vertex prev;
 
 	public Vertex(String name){
 	    this.name = name;    
+	    adj = new ArrayList<>();
 	}
 
 	public String getName(){
 	    return name;
+	}
+	
+	public void printEdges(){
+	    for(Edge e: adj)
+		System.out.print(e.getWeight()+ " ");
+	    
+	    System.out.println();
 	}
 
 	public int compareTo(Vertex node){
