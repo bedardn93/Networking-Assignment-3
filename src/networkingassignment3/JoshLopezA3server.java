@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 public class JoshLopezA3server extends Thread {
     
     static ArrayList<Vertex> vertices = new ArrayList<>();
+    static ArrayList<DVR> dvr = new ArrayList<>();
     private Thread t;
     private String threadName;
     
@@ -50,7 +51,8 @@ public class JoshLopezA3server extends Thread {
         createRouting();
             
         //print routing
-        printRouting();
+        printVertexEdge();
+	printRouting();
                 
         
         
@@ -99,7 +101,7 @@ public class JoshLopezA3server extends Thread {
 		updateRouting(dvrMessage); 
 
 		//prints the routing table 
-		printRouting();
+		printVertexEdge();
 
 		//Elapsed time 
 		long endTime = (System.nanoTime()-startTime);
@@ -113,7 +115,7 @@ public class JoshLopezA3server extends Thread {
 		System.out.println("User choice is invalid");
 	    }//end of if block
 	    //print routing
-	    printRouting();
+	    printVertexEdge();
         }//end of while loop
         
         
@@ -131,12 +133,19 @@ public class JoshLopezA3server extends Thread {
         
     }
 
-    private static void printRouting() {
+    private static void printVertexEdge() {
 	for (Vertex vertice : vertices) {
 	    System.out.print("( " + vertice.getName() + ", ");
 	    for(Edge edge : vertice.adj)
-		System.out.print(edge.getWeight());
-	    System.out.print(" )\n");
+		System.out.print(edge.getWeight() + " ");
+	    System.out.print(")\n");
+	}
+    }
+    
+    private static void printRouting(){
+	System.out.println("Destination\tNext Hop\tDistance");
+	for(DVR d : dvr){
+	    System.out.println(d.getDestNode()+"\t\t"+d.getNextHop()+"\t\t"+d.getDistance());
 	}
     }
 
@@ -148,21 +157,20 @@ public class JoshLopezA3server extends Thread {
 	} catch (URISyntaxException | FileNotFoundException ex) {
 	    Logger.getLogger(JoshLopezA3server.class.getName()).log(Level.SEVERE, null, ex);
 	}
-	
+	int count = 0;
         while(reader.hasNextInt()){
             vertices.add(new Vertex(reader.next()));
             //vertices.get(0).adj = 
                     //new Edge[]{new Edge(vertices.get(0),reader.nextInt())};
-	    vertices.get(0).adj.add(new Edge(vertices.get(0),reader.nextInt()));
-	    vertices.get(0).printEdges();
+	    int weight = reader.nextInt();
+	    System.out.println("one "+weight +" "+ weight);
+	    if(count!=0)
+		vertices.get(count).adj.add(new Edge(vertices.get(count),weight));
+	    vertices.get(0).adj.add(new Edge(vertices.get(0),weight));
+	    vertices.get(count).printEdges();
+	    count++;
         }
-    }
-    
-    
-    private static void dvr(String wt) {
-        
-        
-        
+	dvr.add(new DVR(vertices.get(0),new Vertex("0"),new Vertex("0")));
     }
     
     public static void Dijkstra(Vertex source) {
@@ -189,20 +197,28 @@ public class JoshLopezA3server extends Thread {
     }
     
     private static class DVR {
-	ArrayList<Vertex> destination = new ArrayList<Vertex>();
-	ArrayList<Vertex> nexthop = new ArrayList<Vertex>();
-	ArrayList<Vertex> distance = new ArrayList<Vertex>();
+	Vertex destination;
+	Vertex nexthop;
+	Vertex distance;
+	
+	public DVR(){}
 	
 	public DVR(Vertex dest, Vertex hop, Vertex dist){
-	    destination.add(dest);
-	    nexthop.add(hop);
-	    distance.add(dist);
+	    destination = dest;
+	    nexthop = hop;
+	    distance = dist;
 	}
 	
-	public void addRoute(Vertex dest, Vertex hop, Vertex dist){
-	    destination.add(dest);
-	    nexthop.add(hop);
-	    distance.add(dist);
+	public String getDestNode(){
+	    return destination.getName();
+	}
+	
+	public String getNextHop(){
+	    return nexthop.getName();
+	}
+	
+	public String getDistance(){
+	    return distance.getName();
 	}
     }
     
