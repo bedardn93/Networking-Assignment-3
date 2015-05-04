@@ -5,7 +5,6 @@
  */
 package networkingassignment3;
 
-import java.util.PriorityQueue;
 import java.io.*;
 import java.util.Scanner;
 import java.net.*;

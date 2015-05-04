@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 public class JoshLopezA3server extends Thread {
     
     static ArrayList<Vertex> vertices = new ArrayList<>();
+    static ArrayList<Edge> edges = new ArrayList<>();
     static ArrayList<DVR> dvr = new ArrayList<>();
     private Thread t;
     private String threadName;
@@ -48,7 +49,7 @@ public class JoshLopezA3server extends Thread {
             
             
         //create wt file
-        createRouting();
+        createEdgesFromFile("WT.txt");
             
         //print routing
         printVertexEdge();
@@ -78,7 +79,8 @@ public class JoshLopezA3server extends Thread {
 		
 		//for each dvr message
 		for (int i = 0; i < numDVR_messages; i++) 
-		    updateRouting(inFromClient.readLine());
+		    updateRoutingTable(inFromClient.readLine());
+		printRouting();
 		//Elapsed time
 		long endTime = (System.nanoTime()-startTime);
 		System.out.println("Elapsed time (T1): " + (endTime/1000000000.0) + " seconds.");
@@ -134,43 +136,68 @@ public class JoshLopezA3server extends Thread {
     }
 
     private static void printVertexEdge() {
-	for (Vertex vertice : vertices) {
-	    System.out.print("( " + vertice.getName() + ", ");
-	    for(Edge edge : vertice.adj)
-		System.out.print(edge.getWeight() + " ");
-	    System.out.print(")\n");
-	}
+	    for(Edge edge : edges)
+		System.out.println(edge.toString());
     }
     
     private static void printRouting(){
+	System.out.println("Routing table for i=3");
 	System.out.println("Destination\tNext Hop\tDistance");
 	for(DVR d : dvr){
 	    System.out.println(d.getDestNode()+"\t\t"+d.getNextHop()+"\t\t"+d.getDistance());
 	}
     }
 
-    private static void createRouting() {
-        URL url = JoshLopezA3server.class.getResource("WT.txt");
+    private static void createEdgesFromFile(String file) {
+        URL url = JoshLopezA3server.class.getResource(file);
 	Scanner reader = null;
 	try {
 	    reader = new Scanner(new File(url.toURI()));
 	} catch (URISyntaxException | FileNotFoundException ex) {
 	    Logger.getLogger(JoshLopezA3server.class.getName()).log(Level.SEVERE, null, ex);
 	}
-	int count = 0;
+	//int count = 0;
+	String source = reader.next();
+	double weight = reader.nextInt();
         while(reader.hasNextInt()){
-            vertices.add(new Vertex(reader.next()));
+            //vertices.add(new Vertex(reader.next()));
             //vertices.get(0).adj = 
                     //new Edge[]{new Edge(vertices.get(0),reader.nextInt())};
-	    int weight = reader.nextInt();
-	    System.out.println("one "+weight +" "+ weight);
-	    if(count!=0)
-		vertices.get(count).adj.add(new Edge(vertices.get(count),weight));
-	    vertices.get(0).adj.add(new Edge(vertices.get(0),weight));
-	    vertices.get(count).printEdges();
-	    count++;
+	    String next = reader.next();
+	    weight = reader.nextDouble();
+	    System.out.println(source + " "+next +" "+ weight);
+	    edges.add(new Edge(new Vertex(source),new Vertex(next),weight));
+	    //vertices.get(0).adj.add(new Edge(vertices.get(0),weight));
+	    //vertices.get(count).printEdges();
+	    //count++;
         }
-	dvr.add(new DVR(vertices.get(0),new Vertex("0"),new Vertex("0")));
+	dvr.add(new DVR(new Vertex(source),new Vertex("0"),0.0));
+    }
+    
+    private static void updateRoutingTable(String line){
+	Scanner reader = new Scanner(line);
+	//int count = 0;
+	boolean updated = false;
+	Vertex source = new Vertex(reader.next());
+	double weight = reader.nextInt();
+        while(reader.hasNextInt()){
+            //vertices.add(new Vertex(reader.next()));
+            //vertices.get(0).adj = 
+                    //new Edge[]{new Edge(vertices.get(0),reader.nextInt())};
+	    String next = reader.next();
+	    weight = reader.nextDouble();
+	    System.out.println(source + " "+next +" "+ weight);
+	    edges.add(new Edge(source,new Vertex(next),weight));
+	    System.out.println(dvr.contains(new DVR(source, source, weight)));
+	    if(!updated){
+		dvr.add(new DVR(source, source, weight));
+		updated = true;
+	    }
+	    //vertices.get(0).adj.add(new Edge(vertices.get(0),weight));
+	    //vertices.get(count).printEdges();
+	    //count++;
+        }
+	
     }
     
     public static void Dijkstra(Vertex source) {
@@ -183,7 +210,7 @@ public class JoshLopezA3server extends Thread {
 
             for (Edge edge : u.adj)
             {
-                Vertex vert = edge.node;
+                Vertex vert = edge.node1;
                 double weight = edge.weight;
                 double distance = u.minDis + weight;
 		if (distance < vert.minDis) {
@@ -199,11 +226,11 @@ public class JoshLopezA3server extends Thread {
     private static class DVR {
 	Vertex destination;
 	Vertex nexthop;
-	Vertex distance;
+	double distance;
 	
 	public DVR(){}
 	
-	public DVR(Vertex dest, Vertex hop, Vertex dist){
+	public DVR(Vertex dest, Vertex hop, double dist){
 	    destination = dest;
 	    nexthop = hop;
 	    distance = dist;
@@ -217,8 +244,8 @@ public class JoshLopezA3server extends Thread {
 	    return nexthop.getName();
 	}
 	
-	public String getDistance(){
-	    return distance.getName();
+	public double getDistance(){
+	    return distance;
 	}
     }
     
@@ -248,24 +275,44 @@ public class JoshLopezA3server extends Thread {
 	    return Double.compare(minDis, node.minDis);
 	}
     }
+    
+    private static double findEdgeWeight(String node1,String node2){
+	for(Edge e: edges)
+	    if(e.getNode1().getName().equals(node1)&&e.getNode2().getName().equals(node2))
+		return e.getWeight();
+	return 0.0;
+    }
     private static class Edge {
     
-	Vertex node;
+	Vertex node1,node2;
 	double weight;
 
-	public Edge(){}
+	public Edge(Vertex node1, Vertex node2){
+	    this.node1 = node1;
+	    this.node2 = node2;
+	    this.weight = Double.POSITIVE_INFINITY;
+	}
 
-	public Edge(Vertex node, double weight){
-	    this.node = node;
+	public Edge(Vertex node1, Vertex node2, double weight){
+	    this.node1 = node1;
+	    this.node2 = node2;
 	    this.weight = weight;
 	}
 
-	public Vertex getNode(){
-	    return node;
+	public Vertex getNode1(){
+	    return node1;
+	}
+	
+	public Vertex getNode2(){
+	    return node2;
 	}
 
 	public double getWeight(){
 	    return weight;
+	}
+	
+	public String toString(){
+	    return node1.getName() + "->" + node2.getName() + " distance: " + weight;
 	}
     }
 }
