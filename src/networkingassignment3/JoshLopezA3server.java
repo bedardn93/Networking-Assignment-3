@@ -21,8 +21,11 @@ import java.util.logging.Logger;
 public class JoshLopezA3server extends Thread {
     
     static ArrayList<Vertex> vertices = new ArrayList<>();
+<<<<<<< HEAD
     static ArrayList<Edge> edges = new ArrayList<>();
     static ArrayList<DVR> dvr = new ArrayList<>();
+=======
+>>>>>>> 9bf7245732d5bac26a63b53fb05097f0d7ccce11
     private Thread t;
     private String threadName;
     
@@ -134,6 +137,7 @@ public class JoshLopezA3server extends Thread {
         
     }
 
+<<<<<<< HEAD
     private static void printVertexEdge() {
 	    for(Edge edge : edges)
 		System.out.println(edge.toString());
@@ -144,6 +148,14 @@ public class JoshLopezA3server extends Thread {
 	System.out.println("Destination\tNext Hop\tDistance");
 	for(DVR d : dvr){
 	    System.out.println(d.getDestNode()+"\t\t"+d.getNextHop()+"\t\t"+d.getDistance());
+=======
+    private static void printRouting() {
+	for (Vertex vertice : vertices) {
+	    System.out.print("( " + vertice.getName() + ", ");
+	    for(Edge edge : vertice.adj)
+		System.out.print(edge.getWeight());
+	    System.out.print(" )\n");
+>>>>>>> 9bf7245732d5bac26a63b53fb05097f0d7ccce11
 	}
     }
 
@@ -155,6 +167,7 @@ public class JoshLopezA3server extends Thread {
 	} catch (URISyntaxException | FileNotFoundException ex) {
 	    Logger.getLogger(JoshLopezA3server.class.getName()).log(Level.SEVERE, null, ex);
 	}
+<<<<<<< HEAD
 	//int count = 0;
 	String source = reader.next();
 	double weight = reader.nextInt();
@@ -179,10 +192,14 @@ public class JoshLopezA3server extends Thread {
 	boolean updated = false;
 	Vertex source = new Vertex(reader.next());
 	double weight = reader.nextInt();
+=======
+	
+>>>>>>> 9bf7245732d5bac26a63b53fb05097f0d7ccce11
         while(reader.hasNextInt()){
             //vertices.add(new Vertex(reader.next()));
             //vertices.get(0).adj = 
                     //new Edge[]{new Edge(vertices.get(0),reader.nextInt())};
+<<<<<<< HEAD
 	    String next = reader.next();
 	    weight = reader.nextDouble();
 	    System.out.println(source + " "+next +" "+ weight);
@@ -197,6 +214,18 @@ public class JoshLopezA3server extends Thread {
 	    //count++;
         }
 	
+=======
+	    vertices.get(0).adj.add(new Edge(vertices.get(0),reader.nextInt()));
+	    vertices.get(0).printEdges();
+        }
+    }
+    
+    
+    private static void dvr(String wt) {
+        
+        
+        
+>>>>>>> 9bf7245732d5bac26a63b53fb05097f0d7ccce11
     }
     
     public static void Dijkstra(Vertex source) {
@@ -223,6 +252,7 @@ public class JoshLopezA3server extends Thread {
     }
     
     private static class DVR {
+<<<<<<< HEAD
 	Vertex destination;
 	Vertex nexthop;
 	double distance;
@@ -245,6 +275,22 @@ public class JoshLopezA3server extends Thread {
 	
 	public double getDistance(){
 	    return distance;
+=======
+	ArrayList<Vertex> destination = new ArrayList<Vertex>();
+	ArrayList<Vertex> nexthop = new ArrayList<Vertex>();
+	ArrayList<Vertex> distance = new ArrayList<Vertex>();
+	
+	public DVR(Vertex dest, Vertex hop, Vertex dist){
+	    destination.add(dest);
+	    nexthop.add(hop);
+	    distance.add(dist);
+	}
+	
+	public void addRoute(Vertex dest, Vertex hop, Vertex dist){
+	    destination.add(dest);
+	    nexthop.add(hop);
+	    distance.add(dist);
+>>>>>>> 9bf7245732d5bac26a63b53fb05097f0d7ccce11
 	}
     }
     
