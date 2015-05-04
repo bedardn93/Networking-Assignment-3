@@ -52,7 +52,6 @@ public class JoshLopezA3server extends Thread {
         createEdgesFromFile("WT.txt");
             
         //print routing
-	
         printRouting();
                 
         
