@@ -52,8 +52,8 @@ public class JoshLopezA3server extends Thread {
         createEdgesFromFile("WT.txt");
             
         //print routing
-        printVertexEdge();
-	printRouting();
+	
+        printRouting();
                 
         
         
@@ -103,7 +103,7 @@ public class JoshLopezA3server extends Thread {
 		updateRouting(dvrMessage); 
 
 		//prints the routing table 
-		printVertexEdge();
+		printRouting();
 
 		//Elapsed time 
 		long endTime = (System.nanoTime()-startTime);
@@ -117,7 +117,7 @@ public class JoshLopezA3server extends Thread {
 		System.out.println("User choice is invalid");
 	    }//end of if block
 	    //print routing
-	    printVertexEdge();
+	    printRouting();
         }//end of while loop
         
         
