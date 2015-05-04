@@ -77,9 +77,10 @@ public class JoshLopezA3server extends Thread {
 		int numDVR_messages = Integer.parseInt(inFromClient.readLine());
 		
 		//for each dvr message
-		for (int i = 0; i < numDVR_messages; i++) 
+		for (int i = 0; i < numDVR_messages; i++) {
 		    updateRoutingTable(inFromClient.readLine());
-		printRouting();
+		    printRouting();
+		}
 		//Elapsed time
 		long endTime = (System.nanoTime()-startTime);
 		System.out.println("Elapsed time (T1): " + (endTime/1000000000.0) + " seconds.");
@@ -92,17 +93,16 @@ public class JoshLopezA3server extends Thread {
 
 		//thread 1 
 		//reads DVR messages from client 
-		JoshLopezA3server newThread = new JoshLopezA3server("Thread-1");
-		newThread.start();
+		//JoshLopezA3server newThread = new JoshLopezA3server("Thread-1");
+		//newThread.start();
 		int numDVR_messages = Integer.parseInt(inFromClient.readLine());
-		String dvrMessage = inFromClient.readLine();
 
 		//thread 2
 		//Updates the routing table
-		updateRouting(dvrMessage); 
-
-		//prints the routing table 
-		printRouting();
+		for (int i = 0; i < numDVR_messages; i++) {
+		    updateRoutingTable(inFromClient.readLine());
+		    printRouting();
+		}
 
 		//Elapsed time 
 		long endTime = (System.nanoTime()-startTime);
@@ -115,8 +115,6 @@ public class JoshLopezA3server extends Thread {
 		//invalid choice as in not (1 or 2)
 		System.out.println("User choice is invalid");
 	    }//end of if block
-	    //print routing
-	    printRouting();
         }//end of while loop
         
         
@@ -130,10 +128,7 @@ public class JoshLopezA3server extends Thread {
 	    System.out.println("Thread interrupted.");
 	}
     }
-    private static void updateRouting(String dvrMessage) {
-        
-    }
-
+    
     private static void printVertexEdge() {
 	    for(Edge edge : edges)
 		System.out.println(edge.toString());
@@ -164,7 +159,6 @@ public class JoshLopezA3server extends Thread {
                     //new Edge[]{new Edge(vertices.get(0),reader.nextInt())};
 	    String next = reader.next();
 	    weight = reader.nextDouble();
-	    System.out.println(source + " "+next +" "+ weight);
 	    edges.add(new Edge(new Vertex(source),new Vertex(next),weight));
 	    //vertices.get(0).adj.add(new Edge(vertices.get(0),weight));
 	    //vertices.get(count).printEdges();
@@ -185,9 +179,7 @@ public class JoshLopezA3server extends Thread {
                     //new Edge[]{new Edge(vertices.get(0),reader.nextInt())};
 	    String next = reader.next();
 	    weight = reader.nextDouble();
-	    System.out.println(source + " "+next +" "+ weight);
 	    edges.add(new Edge(source,new Vertex(next),weight));
-	    System.out.println(dvr.contains(new DVR(source, source, weight)));
 	    if(!updated){
 		dvr.add(new DVR(source, source, weight));
 		updated = true;
